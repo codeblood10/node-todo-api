@@ -6,6 +6,7 @@ console.log(obj);
 var user  = {name:"ankit",age:21};
 var {name} = user;
 console.log(name);
+// we don not create database in mongodb first just call it but mongodb create a database when we add thing in it.
 MongoClient.connect("mongodb://localhost:27017/TOdoApp",(err,db)=>{
     if(err)
     {
@@ -15,7 +16,7 @@ MongoClient.connect("mongodb://localhost:27017/TOdoApp",(err,db)=>{
     console.log("connected to mongo server");
 /*
 db.collection('Todos').insertOne({
-  // use _id to set custom id 
+  // use _id to set custom id
    test : "something to do",
    completed :false
 },(err,res)=>{
@@ -36,7 +37,7 @@ db.collection('person').insertOne({
         return console.log("cant connect");
       }
       console.log(JSON.stringify(res.ops,undefined,2));
-      console.log(res.ops[0]._id.getTimestamp());
+      console.log(res.ops[0]._id.getTimestamp()); //time and date of a document
 }); */
    db.close();
 

@@ -9,12 +9,12 @@ MongoClient.connect('mongodb://localhost:27017/TOdoApp',(err,db) =>{
   //delete many
   /* db.collection("Todos").deleteMany({test:"fucked yesterday"}).then((result)=>{
      console.log(result); */
-//   });
+//  });
   //deleteOne
 //  db.collection("Todos").deleteOne({test:"fucked yesterday"}).then((result)=>{
   //  console.log(result);
 //  });
-//findoneanddelete
+//findoneanddelete //gives back the document not ok and n as above
 //db.collection("Todos").findOneAndDelete({completed:false}).then((result)=>{
    //console.log(result);
 //});
