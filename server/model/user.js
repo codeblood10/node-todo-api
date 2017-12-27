@@ -15,4 +15,4 @@ newuser.save().then((res)=>{
  console.log("task has been completed",res);},(e)=>{
   console.log('sorry buddy u entered some thing wrong');
 }); */
-module.export={user};
+module.exports={user};

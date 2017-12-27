@@ -25,3 +25,5 @@ todo.save().then((doc)=>{
 app.listen(3000,()=>{
  console.log('startes the server');
 });
+
+ module.exports = {app}; // for testing purpose
