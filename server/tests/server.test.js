@@ -5,9 +5,23 @@ const{app} = require('./../server');
 const{Todo} = require('./../model/todo.js');
 
 //before each run before every test
+const todos = [{
+  text : "first"
+},{
+  text :"second"
+}];
  beforeEach((done)=>{
- Todo.remove({}).then(()=>done()); // we have to remove all the todo from the database to run the test to check whether request id fufilled or not
+  // for testing post request
+  // Todo.remove({}).then(()=>done()); // we have to remove all the todo from the database to run the test to check whether request id fufilled or not
+ // for testing get request
+  Todo.remove({}).then(()=>{
+     return Todo.insertMany(todos);
+   }).then(()=>{
+     done();
+    });
  });
+
+
 
 describe('POST /todos',() =>{
    it('should create  new todo',(done)=>{
@@ -25,7 +39,7 @@ describe('POST /todos',() =>{
                console.log("should be defined");
                return  done(err);
             }
-          Todo.find().then((todos)=> {
+          Todo.find({text}).then((todos)=> {
         expect(todos.length).toBe(1);
          expect(todos[0].text).toBe(text);
             done();
@@ -44,7 +58,7 @@ describe('POST /todos',() =>{
               return done(err);
             }
             Todo.find().then((todos)=>{
-               expect(todos.length).toBe(0);
+               expect(todos.length).toBe(2);
               // expect(todos[0]).toBe("");
                done();
             }).catch((e)=>done(e));
@@ -53,3 +67,17 @@ describe('POST /todos',() =>{
 
    });
 });
+
+describe("GET/todos" ,()=>{
+  it("should get all todos",(done)=>{
+
+   request(app)
+    .get('/todos')
+    .expect(200)
+    .expect((res)=>{
+      console.log(res.body);
+      expect(res.body.todos.length).toBe(2);
+     })
+    .end(done);
+   });
+ });
