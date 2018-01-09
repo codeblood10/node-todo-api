@@ -7,7 +7,7 @@ var {Todo} = require("./model/todo.js");
 var{user} = require("./model/user.js");
 
 var app =express();
-
+const port = process.env.PORT || 3000;
  app.use(bodyparser.json());
 
  app.post('/todos',(req,res)=>{
@@ -43,7 +43,7 @@ todo.save().then((doc)=>{
   }).catch((e)=>res.status(404).send({}));
  });
 app.listen(3000,()=>{
- console.log('startes the server');
+ console.log(`started up at${port}`);
 });
 
  module.exports = {app}; // for testing purpose
