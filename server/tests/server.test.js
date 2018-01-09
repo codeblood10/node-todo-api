@@ -1,13 +1,16 @@
 const expect = require('expect');
 const request = require('supertest'); // supertest convert request string to json automatically
+var {ObjectID} = require('mongodb');
 
 const{app} = require('./../server');
 const{Todo} = require('./../model/todo.js');
 
 //before each run before every test
 const todos = [{
+  _id : new ObjectID(),
   text : "first"
 },{
+  _id : new ObjectID(),
   text :"second"
 }];
  beforeEach((done)=>{
@@ -39,7 +42,7 @@ describe('POST /todos',() =>{
                console.log("should be defined");
                return  done(err);
             }
-          Todo.find({text}).then((todos)=> {
+        Todo.find({text}).then((todos)=> {
         expect(todos.length).toBe(1);
          expect(todos[0].text).toBe(text);
             done();
@@ -81,3 +84,31 @@ describe("GET/todos" ,()=>{
     .end(done);
    });
  });
+describe("Get/todos/id",()=>{
+  it("should get tod oby id",(done)=>{
+     request(app)
+     .get(`/todos/${todos[0]._id}`)
+     .expect(200)
+     .expect((res)=>{
+        console.log(res.body.todos);
+        expect(res.body.todos.text).toBe(todos[0].text);
+     })
+    .end(done);
+  });
+
+ it("should return a 404 not found",(done)=>{
+    request(app)
+    .get('todos/5a46c396fa2c98331cbc8ff9')
+    .expect(404)
+    .end(done);
+
+ });
+
+it("should return a 404",(done)=>{
+   request(app)
+   .get(`todos/6a46c396fa2c98331cbc8ff9`)
+   .expect(404)
+   .end(done);
+});
+
+});
