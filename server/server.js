@@ -42,7 +42,7 @@ todo.save().then((doc)=>{
     res.send({todos});
   }).catch((e)=>res.status(404).send({}));
  });
-app.listen(3000,()=>{
+app.listen(port,()=>{
  console.log(`started up at${port}`);
 });
 
