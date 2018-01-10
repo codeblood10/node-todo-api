@@ -42,6 +42,26 @@ todo.save().then((doc)=>{
     res.send({todos});
   }).catch((e)=>res.status(404).send({}));
  });
+
+app.delete('/todos/:id',(req,res)=>{
+   var id = req.params.id;
+   if(!ObjectID.isValid)
+     res.status(404).send("sorry bud u enterd a invalid");
+   Todo.findOneAndRemove(id).then((todos)=>{
+     if(todos)
+       {
+         res.send({todos});
+       }
+    else
+      res.status(404).send("sorry bud you request in invalid");
+
+   }).catch((e)=>res.status(404).send("not your fault some system eroor"));
+});
+
+
+
+
+
 app.listen(port,()=>{
  console.log(`started up at${port}`);
 });
