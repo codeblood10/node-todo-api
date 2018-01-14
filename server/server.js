@@ -26,9 +26,7 @@ todo.save().then((doc)=>{
  app.get('/todos',(req,res)=>{
     Todo.find().then((todos)=>
     { res.send({todos});
-    },(e)=>{
-       res.status(400).send(e);
-    });
+  }).catch((e)=>res.status(400).send(e));
  });
  app.get('/todos/:id',(req,res)=>{
    var id = req.params.id;
@@ -45,15 +43,17 @@ todo.save().then((doc)=>{
 
 app.delete('/todos/:id',(req,res)=>{
    var id = req.params.id;
-   if(!ObjectID.isValid)
-     res.status(404).send("sorry bud u enterd a invalid");
-   Todo.findOneAndRemove(id).then((todos)=>{
-     if(todos)
+
+   if(!ObjectID.isValid(id))
+     res.status(404).send("sorry bud u enterd a invalid id");
+   Todo.findByIdAndRemove(id).then((todos)=>{
+     if(!todos)
        {
-         res.send({todos});
+           res.status(404).send("sorry bud you request in invalid");
+
        }
     else
-      res.status(404).send("sorry bud you request in invalid");
+        res.send({todos});
 
    }).catch((e)=>res.status(404).send("not your fault some system eroor"));
 });

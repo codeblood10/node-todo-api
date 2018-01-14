@@ -60,11 +60,11 @@ describe('POST /todos',() =>{
               console.log('should be defined as error');
               return done(err);
             }
-            Todo.find().then((todos)=>{
-               expect(todos.length).toBe(2);
-              // expect(todos[0]).toBe("");
-               done();
-            }).catch((e)=>done(e));
+      Todo.find().then((todos)=>{
+            expect(todos.length).toBe(2);
+            // expect(todos[0]).toBe("");
+           done();
+          }).catch((e)=>done(e));
         });
 
 
@@ -98,7 +98,7 @@ describe("Get/todos/id",()=>{
 
  it("should return a 404 not found",(done)=>{
     request(app)
-    .get('todos/5a46c396fa2c98331cbc8ff9')
+    .get('/todos/5a46c396fa2c98331cbc8ff9')
     .expect(404)
     .end(done);
 
@@ -106,9 +106,47 @@ describe("Get/todos/id",()=>{
 
 it("should return a 404",(done)=>{
    request(app)
-   .get(`todos/6a46c396fa2c98331cbc8ff9`)
+   .get(`/todos/6a46c396fa2c98331cbc8ff9`)
    .expect(404)
    .end(done);
 });
 
+});
+
+describe("delete todo/id",()=>{
+    it("should delete required todos",(done)=>{
+     request(app)
+     .delete(`/todos/${todos[0]._id}`)
+     .expect(200)
+      .expect((res)=>{
+      //  console.log(res.body.todos);
+       })
+       .end((err,res)=>{
+         if(err)
+           return done(err);
+            Todo.findById(todos[0]._id).then((todo)=>{
+               expect(todo).toNotExist();
+               done();
+          }).catch((e)=>done(e));
+
+
+       });
+     });
+
+     it("should return a 404 not found",(done)=>{
+
+        request(app)
+        .delete(`/todos/`)
+        .expect(404)
+        .end(done);
+
+     });
+
+    it("should return a 404",(done)=>{
+       request(app)
+       .delete(`/todos/396fa2c98331cbc8ff9`)
+
+       .expect(404)
+       .end(done);
+    });
 });
