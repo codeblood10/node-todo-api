@@ -11,7 +11,9 @@ const todos = [{
   text : "first"
 },{
   _id : new ObjectID(),
-  text :"second"
+  text :"second",
+  completed : true ,
+  completedAt : 2314
 }];
  beforeEach((done)=>{
   // for testing post request
@@ -152,4 +154,51 @@ describe("delete todo/id",()=>{
        .expect(404)
        .end(done);
     });
+});
+
+ describe("PAtch todos/:id",()=>{
+   it("should update the todo",(done)=>{
+      var body = { text:"this is an update",
+                   completed:true
+                  };
+      request(app)
+      .patch(`/todos/${todos[0]._id}`)
+      .send(body)
+      .expect(200)
+      .end((err,res)=>{
+          if(err)
+          {
+            return done(err);
+          }
+          Todo.findById(todos[0]._id).then((todo)=>{
+             console.log(todo);
+             expect(todo.text).toBe(body.text);
+             expect(todo.completedAt).toBeA("number");
+             done();
+        }).catch((e)=>done(e));
+      });
+ });
+
+ it("should clear the completedat",(done)=>{
+    var body = { text:"this is an update",
+                 completed:false
+                };
+    request(app)
+    .patch(`/todos/${todos[1]._id}`)
+    .send(body)
+    .expect(200)
+    .end((err,res)=>{
+        if(err)
+        {
+          return done(err);
+        }
+        Todo.findById(todos[1]._id).then((todo)=>{
+           console.log(todo);
+           expect(todo.text).toBe(body.text);
+           expect(todo.completedAt).toBe(null);
+           done();
+      }).catch((e)=>done(e));
+    });
+});
+
 });
