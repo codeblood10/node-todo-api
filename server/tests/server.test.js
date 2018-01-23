@@ -119,7 +119,7 @@ describe("delete todo/id",()=>{
      .delete(`/todos/${todos[0]._id}`)
      .expect(200)
       .expect((res)=>{
-      //  console.log(res.body.todos);
+        console.log(res.body.todos);
        })
        .end((err,res)=>{
          if(err)
@@ -134,9 +134,12 @@ describe("delete todo/id",()=>{
      });
 
      it("should return a 404 not found",(done)=>{
-
+         var id = new ObjectID();
         request(app)
-        .delete(`/todos/`)
+        .delete(`/todos/id`)
+        .expect((res)=>{
+          console.log(res.body.todos);
+         })
         .expect(404)
         .end(done);
 

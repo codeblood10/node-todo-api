@@ -1,3 +1,4 @@
+const _ = require('lodash');
 var express = require('express');
 var bodyparser = require('body-parser'); // convert  json string in javascript
 var {ObjectID} = require('mongodb');
@@ -6,7 +7,7 @@ var{mongoose} = require('./db/mongoose.js');
 var {Todo} = require("./model/todo.js");
 var{user} = require("./model/user.js");
 
-var app =express();
+var app = express();
 const port = process.env.PORT || 3000;
  app.use(bodyparser.json());
 
@@ -18,8 +19,7 @@ const port = process.env.PORT || 3000;
 todo.save().then((doc)=>{
    res.send(doc);
 },(e)=>{
-
-  res.status(400).send(e);
+   res.status(400).send(e);
  });
 
  });
@@ -50,7 +50,6 @@ app.delete('/todos/:id',(req,res)=>{
      if(!todos)
        {
            res.status(404).send("sorry bud you request in invalid");
-
        }
     else
         res.send({todos});
@@ -58,7 +57,33 @@ app.delete('/todos/:id',(req,res)=>{
    }).catch((e)=>res.status(404).send("not your fault some system eroor"));
 });
 
+app.patch('/todos/:id',(req,res)=>{
+  var id = req.params.id;
+  var body = _.pick(req.body,["text","completed"]); //we have to pick the selected property that user is allowed to update
+  if(!ObjectID.isValid(id))
+   {
+     return res.status(404).send();
+   }
+   if(_.isBoolean(body.completed)&&body.completed)
+    {
+      body.completedAt = new Date().getTime();
+    }
+    else
+    {
+       body.completed = false ;
+       body.completedAt = null;
+    }
+    Todo.findByIdAndUpdate(id,{$set:body},{new :true}).then((todo)=>{
+      if(!todo)
+      {
+        return res.status(404).send();
+      }
+      res.send({todo});
+    }).catch((e)=>{
+          res.status(404).send();
+    })
 
+ });
 
 
 
