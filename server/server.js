@@ -1,3 +1,13 @@
+var env = process.env.NODE_ENV || 'development';
+console.log('env *****', env);
+if( env === 'development') {
+  process.env.PORT = 3000;
+  process.env.MONGODB_URI = 'mongodb://localhost:27017/test';
+} else if( env === 'test') {
+  process.env.PORT = 3000;
+  process.env.MONGODB_URI = 'mongodb://localhost:27017/testTest';
+}
+
 const _ = require('lodash');
 var express = require('express');
 var bodyparser = require('body-parser'); // convert  json string in javascript
