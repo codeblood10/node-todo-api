@@ -7,7 +7,7 @@ var {ObjectID} = require('mongodb');
 
 var{mongoose} = require('./db/mongoose.js');
 var {Todo} = require("./model/todo.js");
-var{user} = require("./model/user.js");
+var{User} = require("./model/user.js");
 
 var app = express();
 const port = process.env.PORT || 3000;
@@ -22,8 +22,22 @@ todo.save().then((doc)=>{
 },(e)=>{
    res.status(400).send(e);
  });
-
  });
+
+app.post('/users',(req,res)=>{
+
+    var user = new User(_.pick(req.body,["email","password"]));
+    user.save().then((user)=>{
+      return user.generateAuthToken();
+      //res.send(doc);  we chain the promises
+    }).then((token)=>{
+      res.header('x-auth',token).send(user);
+    }).catch((e)=>{
+      res.status(400).send(e);
+    })
+
+});
+
  app.get('/todos',(req,res)=>{
     Todo.find().then((todos)=>
     { res.send({todos});
