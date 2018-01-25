@@ -31,9 +31,9 @@ var Userschema = new mongoose.Schema({
      }
  }]
 });
-Userschema.methods.toJSON= function(){
+Userschema.methods.toJSON = function(){
   var user = this;
-  var userObject  = user.toObject();
+  var userObject  =  user.toObject();
 
   return _.pick(userObject,["email","_id"]);
 };
@@ -48,6 +48,27 @@ Userschema.methods.generateAuthToken = function(){
     return token;
   });
 };
+
+Userschema.statics.findByToken = function(token) {
+    var User = this;
+    var decoded ;
+    try
+    {
+     decoded  = jwt.verify(token,"1234");
+
+   }catch (e) {
+    // return new Promises((resolve,reject)=>{
+    //   reject();
+    // });
+     return Promise.reject();
+    }
+ return   User.findOne({
+ "_id" : decoded._id,
+ "tokens.token" : token,
+ "tokens.access" : "auth"
+ }); // quotes are required when we have .   in property
+};
+
  var User = mongoose.model("User",Userschema);
 /*var newuser = new  user({
   email:"ankitshr@gmail.com"

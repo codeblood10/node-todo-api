@@ -5,6 +5,7 @@ var data  = {
 };
 var token = jwt.sign(data,'1234');
 console.log(token);
+token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTZhMmJmZjY0MzM2MjI3MjEzYWQ4MjgiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNTE2OTA3NTE5fQ.u1qfTNX2ihVQ2KclOiXLsARQAGESQ09RjRDRnNyQiwg";
 var decoded = jwt.verify(token,'1234');
 console.log('decoded',decoded);
 // var message = "i am user 2";
