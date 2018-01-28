@@ -4,30 +4,32 @@ var {ObjectID} = require('mongodb');
 
 const{app} = require('./../server');
 const{Todo} = require('./../model/todo.js');
+const{User} = require('./../model/user.js');
+const{todos,populateTodos,users,populateUsers} = require('./seed/seed.js');
 
 //before each run before every test
-const todos = [{
-  _id : new ObjectID(),
-  text : "first"
-},{
-  _id : new ObjectID(),
-  text :"second",
-  completed : true ,
-  completedAt : 2314
-}];
- beforeEach((done)=>{
-  // for testing post request
-  // Todo.remove({}).then(()=>done()); // we have to remove all the todo from the database to run the test to check whether request id fufilled or not
- // for testing get request
-  Todo.remove({}).then(()=>{
-     return Todo.insertMany(todos);
-   }).then(()=>{
-     done();
-    });
- });
+// const todos = [{
+//   _id : new ObjectID(),
+//   text : "first"
+// },{
+//   _id : new ObjectID(),
+//   text :"second",
+//   completed : true ,
+//   completedAt : 2314
+// }];
+ // beforeEach((done)=>{
+ //  // for testing post request
+ //  // Todo.remove({}).then(()=>done()); // we have to remove all the todo from the database to run the test to check whether request id fufilled or not
+ // // for testing get request
+ //  Todo.remove({}).then(()=>{
+ //     return Todo.insertMany(todos);
+ //   }).then(()=>{
+ //     done();
+ //    });
+ // });
 
-
-
+ beforeEach(populateTodos);
+ beforeEach(populateUsers);
 describe('POST /todos',() =>{
    it('should create  new todo',(done)=>{
        var text = "test todo text";
@@ -200,5 +202,73 @@ describe("delete todo/id",()=>{
       }).catch((e)=>done(e));
     });
 });
+
+});
+
+describe("get /user/me",()=>{
+   it("should return user when authenicated",(done)=>{
+      request(app)
+      .get('/users/me')
+      .set('x-auth',users[0].tokens[0].token)
+      .expect(200)
+      .expect((res)=>{
+         expect(res.body._id).toBe(users[0]._id.toHexString());
+         expect(res.body.email).toBe(users[0].email);
+      })
+      .end(done);
+   });
+    it("should return 401 it user not authenticated",(done)=>{
+      request(app)
+      .get('/users/me')
+      .expect(401)
+      .expect((res)=>{
+         expect(res.body).toEqual({});
+
+      })
+      .end(done);
+    });
+
+});
+
+describe('post/users',(done)=>{
+  it("should create a user",(done)=>{
+     var body = {email:"ankitshr2@gmail.com",password:"vuivavaav"};
+     request(app)
+       .post('/users')
+       .send(body)
+       .expect(200)
+      .expect((res)=>{expect(res.headers['x-auth']).toExist();})
+       .end((err,res)=>{
+           if(err)
+           {
+             console.log("should be defined");
+             return  done(err);
+          }
+
+      User.find({email:body.email}).then((userg)=> {
+      expect(userg.length).toBe(1);
+
+          done();
+        }).catch((e)=> done(e));
+               });
+
+  });
+
+  it("should return vaildation errors",(done)=>{
+     var body = {email:"ankitshr2gmil.com",password:"vuivavaav"};
+     request(app)
+       .post('/users')
+       .send(body)
+       .expect(400)
+       .end(done);
+   });
+   it("should return email in use",(done)=>{
+      var body = {email:"ankitshr8@gmail.com",password:"vuivavaav"};
+      request(app)
+        .post('/users')
+        .send(body)
+        .expect(400)
+        .end(done);
+    });
 
 });
