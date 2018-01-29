@@ -1,5 +1,5 @@
 require("./config/config.js");
-
+const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 var express = require('express');
 var bodyparser = require('body-parser'); // convert  json string in javascript
@@ -39,7 +39,17 @@ app.post('/users',(req,res)=>{
 
 });
 
+app.post('/users/login',(req,res)=>{
+    var body =  {email:req.body.email,password:req.body.password};
 
+    User.findByCredentials(body.email,body.password).then((user)=>{
+        return user.generateAuthToken().then((token)=>{           //return is used to catch error in single catch keep the chain alive
+              res.header('x-auth',token).send(user);
+           });
+    }).catch((e)=>{
+      res.status(400).send("can't find you buudy");
+    });
+});
 
 app.get('/users/me',authenticate,(req,res)=>{
     res.send(req.user);
@@ -105,8 +115,6 @@ app.patch('/todos/:id',(req,res)=>{
     })
 
  });
-
-
 
 app.listen(port,()=>{
  console.log(`started up at${port}`);

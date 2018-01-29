@@ -272,3 +272,41 @@ describe('post/users',(done)=>{
     });
 
 });
+
+describe('post/users login',(done)=>{
+  it("should login user",(done)=>{
+
+     request(app)
+       .post('/users/login')
+       .send({email:users[1].email,password:users[1].password})
+       .expect(200)
+      .expect((res)=>{expect(res.headers['x-auth']).toExist();})
+       .end((err,res)=>{
+           if(err)
+           {
+             console.log("should be defined");
+             return  done(err);
+          }
+
+      User.findById(users[1]._id).then((userg)=> {
+    //expect(userg.length).toBe(1); // findBYid return a token and find return an array //pitfall
+    //  console.log(userg);
+
+      expect(userg.tokens[0]).toInclude({access:"auth",token:res.headers["x-auth"]});
+          done();
+        }).catch((e)=> done(e));
+               });
+
+  });
+
+  it("should return invalid login",(done)=>{
+    request(app)
+      .post('/users/login')
+      .send({email:users[1].email,password:"addv"})
+      .expect(400)
+
+      .end(done);
+   });
+
+
+});

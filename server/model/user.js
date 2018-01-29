@@ -45,9 +45,11 @@ Userschema.methods.generateAuthToken = function(){
 
 
   user.tokens.push({access,token});
-  return user.save().then(()=>{
+
+  return user.save().then((doc)=>{
+
     return token;
-  });
+  }).catch((e)=>{console.log("cant save user")});
 };
 
 Userschema.statics.findByToken = function(token) {
@@ -69,6 +71,23 @@ Userschema.statics.findByToken = function(token) {
  "tokens.access" : "auth"
  }); // quotes are required when we have .   in property
 };
+Userschema.statics.findByCredentials = function(email,password){
+  var User = this;
+ return  User.findOne({email}).then((user)=>{
+        if(!user)
+          return Promise.reject();
+
+        return new Promise((resolve,reject)=>{
+          bcrypt.compare(password,user.password,(err,res)=>{
+              if(res)
+               resolve(user);
+              else
+                  reject();
+          });
+
+        });
+  });
+};
 Userschema.pre('save',function(next){
   var user = this;
 
@@ -78,7 +97,7 @@ Userschema.pre('save',function(next){
      bcrypt.hash(user.password,salt,(err,hash)=>{
         user.password = hash ;
          next();
-        
+
      });
      });
 
