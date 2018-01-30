@@ -51,7 +51,16 @@ Userschema.methods.generateAuthToken = function(){
     return token;
   }).catch((e)=>{console.log("cant save user")});
 };
-
+Userschema.methods.removeToken = function (token){
+  var user =this ;
+  return user.update({
+    $pull:{
+       tokens:{
+           token:token
+       }
+    }
+  });
+};
 Userschema.statics.findByToken = function(token) {
     var User = this;
     var decoded ;
