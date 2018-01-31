@@ -13,7 +13,11 @@ var Todo = mongoose.model('Todo',{
   completedAt:{
     type : Number ,
     default : null
-  }});
+  },
+  _creator:{
+   type : mongoose.Schema.Types.ObjectId,
+  }
+});
   // we cannot go  beyond the schema working in mongoose
   /*var newtodo = new Todo({
     text:"whats"
