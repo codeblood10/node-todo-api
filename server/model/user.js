@@ -41,7 +41,7 @@ Userschema.methods.toJSON = function(){
 Userschema.methods.generateAuthToken = function(){
   var user  = this;  // we dont  use arrow function here because donot binf the function with this
   var access = "auth";
-  var token = jwt.sign({_id:user._id.toHexString(),access},"1234").toString();
+  var token = jwt.sign({_id:user._id.toHexString(),access},process.env.JWT_SECRET).toString();
 
 
   user.tokens.push({access,token});
@@ -66,7 +66,7 @@ Userschema.statics.findByToken = function(token) {
     var decoded ;
     try
     {
-     decoded  = jwt.verify(token,"1234");
+     decoded  = jwt.verify(token,process.env.JWT_SECRET);
 
    }catch (e) {
     // return new Promises((resolve,reject)=>{

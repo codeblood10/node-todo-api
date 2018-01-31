@@ -10,7 +10,7 @@ const users = [{
    password :"codeblood",
   tokens :[{
   access : "auth",
-  token  : jwt.sign({_id:userid.toHexString(),access:'auth'},"1234").toString()
+  token  : jwt.sign({_id:userid.toHexString(),access:'auth'},process.env.JWT_SECRET).toString()
 }]
 },{
    _id : userid1,
@@ -18,7 +18,7 @@ const users = [{
     password :"user2pass",
     tokens :[{
     access : "auth",
-    token  : jwt.sign({_id:userid1.toHexString(),access:'auth'},"1234").toString()
+    token  : jwt.sign({_id:userid1.toHexString(),access:'auth'},process.env.JWT_SECRET).toString()
   }]
 
 }];
