@@ -310,3 +310,25 @@ describe('post/users login',(done)=>{
 
 
 });
+
+describe("should remove auth token on log out",()=>{
+   it('should remove auth token',(done)=>{
+     request(app)
+     .delete("/users/me/token")
+     .set('x-auth',users[0].tokens[0].token)
+     .expect(200)
+     .end((err,res)=>{
+       if(err)
+       {
+         return done(err);
+       }
+       User.findById(users[0]._id).then((userg)=> {
+
+      //  console.log(userg);
+       expect(userg.tokens).toExclude({access:"auth",token:res.headers["x-auth"]});
+           done();
+         }).catch((e)=> done(e));
+     });
+   });
+
+});
