@@ -144,7 +144,7 @@ describe("delete todo/id",()=>{
          if(err)
            {return done(err);}
             Todo.findById(todos[1]._id).then((todo)=>{
-               expect(todo).toNotExist();
+               expect(todo).toBeFalsy();
                done();
           }).catch((e)=>done(e));
 
@@ -173,7 +173,7 @@ describe("delete todo/id",()=>{
        .end(done);
     });
 
-    it("should not delete unauthired todos",(done)=>{
+    it("should not delete unauthorised todos",(done)=>{
      request(app)
      .delete(`/todos/${todos[1]._id}`)
      .set('x-auth',users[0].tokens[0].token)
@@ -185,7 +185,7 @@ describe("delete todo/id",()=>{
          if(err)
            {return done(err);}
             Todo.findById(todos[1]._id).then((todo)=>{
-               expect(todo).toExist();
+               expect(todo).toBeTruthy();
                done();
           }).catch((e)=>done(e));
 
@@ -213,7 +213,7 @@ describe("delete todo/id",()=>{
           Todo.findById(todos[0]._id).then((todo)=>{
              console.log(todo);
              expect(todo.text).toBe(body.text);
-             expect(todo.completedAt).toBeA("number");
+             expect(typeof todo.completedAt).toBe("number");
              done();
         }).catch((e)=>done(e));
       });
@@ -288,7 +288,7 @@ describe('post/users',(done)=>{
        .post('/users')
        .send(body)
        .expect(200)
-      .expect((res)=>{expect(res.headers['x-auth']).toExist();})
+      .expect((res)=>{expect(res.headers['x-auth']).toBeTruthy();})
        .end((err,res)=>{
            if(err)
            {
@@ -297,7 +297,7 @@ describe('post/users',(done)=>{
           }
 
       User.find({email:body.email}).then((userg)=> {
-      expect(userg.length).toBe(1);
+      expect(userg.length).toBe(1);  //to use .not.toBe instead of toNotBe
 
           done();
         }).catch((e)=> done(e));
@@ -331,7 +331,7 @@ describe('post/users login',(done)=>{
        .post('/users/login')
        .send({email:users[1].email,password:users[1].password})
        .expect(200)
-      .expect((res)=>{expect(res.headers['x-auth']).toExist();})
+      .expect((res)=>{expect(res.headers['x-auth']).toBeTruthy();})
        .end((err,res)=>{
            if(err)
            {
@@ -342,7 +342,7 @@ describe('post/users login',(done)=>{
       User.findById(users[1]._id).then((userg)=> {
     //expect(userg.length).toBe(1); // findBYid return a token and find return an array //pitfall
 
-   expect(userg.tokens[1]).toInclude({access:"auth",token:res.headers["x-auth"]});
+    expect(userg.toObject().tokens[1]).toMatchObject({access:"auth",token:res.headers["x-auth"]}); // new object version do not autoparse the json data;
           done();
         }).catch((e)=> done(e));
                });
@@ -375,7 +375,7 @@ describe("should remove auth token on log out",()=>{
        User.findById(users[0]._id).then((userg)=> {
 
       //  console.log(userg);
-       expect(userg.tokens).toExclude({access:"auth",token:res.headers["x-auth"]});
+       expect(userg.tokens).not.toMatchObject({access:"auth",token:res.headers["x-auth"]});
            done();
          }).catch((e)=> done(e));
      });
