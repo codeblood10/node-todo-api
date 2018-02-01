@@ -41,8 +41,11 @@ Userschema.methods.toJSON = function(){
 Userschema.methods.generateAuthToken = function(){
   var user  = this;  // we dont  use arrow function here because donot binf the function with this
   var access = "auth";
-  var token = jwt.sign({_id:user._id.toHexString(),access},process.env.JWT_SECRET).toString();
-
+  try
+  {var token = jwt.sign({_id:user._id.toHexString(),access},process.env.JWT_SECRET).toString();}
+  catch(e)
+  {console.log(e);
+  }
 
   user.tokens.push({access,token});
 
