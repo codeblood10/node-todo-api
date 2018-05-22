@@ -8,7 +8,8 @@ var {ObjectID} = require('mongodb');
 var{mongoose} = require('./db/mongoose.js');
 var {Todo} = require("./model/todo.js");
 var{User} = require("./model/user.js");
-var {authenticate} = require("./middleware/authenticate.js")
+var{adahar} = require("./model/adahar.js");
+var {authenticate} = require("./middleware/authenticate.js");
 
 var app = express();
 const port = process.env.PORT || 3000;
@@ -25,7 +26,25 @@ todo.save().then((doc)=>{
    res.status(400).send(e);
  });
  });
-
+app.post("/adahar/check",(req,res)=>{
+   var body = {name:req.body.name,uid:req.body.uid};
+   adahar.findOne(body).then((todos)=>{
+    if(!todos)
+      res.status(404).send({validated :"fail"});
+     else
+     res.send({validated:"pass"});
+   }).catch((e)=>res.status(404).send({}));
+});
+app.post("/adahar",(req,res)=>{
+   var body = {name:req.body.name,uid:req.body.uid};
+   var entry = new adahar(body);
+   entry.save().then((user)=>{
+   if(!user)
+     res.status(404).send({});
+     else
+      res.send({user});
+   }).catch((e)=>res.status(404).send({}));
+});
 app.post('/users',(req,res)=>{
 
     var user = new User(_.pick(req.body,["email","password"]));
