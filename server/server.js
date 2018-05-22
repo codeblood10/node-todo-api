@@ -35,6 +35,14 @@ app.post("/adahar/check",(req,res)=>{
      res.send({validated:"pass"});
    }).catch((e)=>res.status(404).send({}));
 });
+app.get("/adahar",(req,res)=>{
+  adahar.find().then((todos)=>{
+   if(!todos)
+     res.status(404).send({});
+    else
+    res.send({todos});
+  }).catch((e)=>res.status(404).send({}));
+});
 app.post("/adahar",(req,res)=>{
    var body = {name:req.body.name,uid:req.body.uid};
    var entry = new adahar(body);
