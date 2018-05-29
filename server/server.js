@@ -2,6 +2,7 @@ require("./config/config.js");
 const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 var express = require('express');
+var cors = require('cors');
 var bodyparser = require('body-parser'); // convert  json string in javascript
 var {ObjectID} = require('mongodb');
 
@@ -14,6 +15,7 @@ var {authenticate} = require("./middleware/authenticate.js");
 var app = express();
 const port = process.env.PORT || 3000;
  app.use(bodyparser.json());
+ app.use(cors());
  app.post('/todos',authenticate,(req,res)=>{
    // console.log(req.body);
    var todo = new Todo({
@@ -27,8 +29,9 @@ todo.save().then((doc)=>{
  });
  });
 app.post("/adahar/check",(req,res)=>{
-   var body = {name:req.body.name,uid:req.body.uid};
-   adahar.findOne(body).then((todos)=>{
+   console.log(req.body);
+
+   adahar.findOne(req.body).then((todos)=>{
     if(!todos)
       res.status(404).send({validated :"fail"});
      else
