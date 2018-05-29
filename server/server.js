@@ -31,7 +31,7 @@ todo.save().then((doc)=>{
 app.post("/adahar/check",(req,res)=>{
    console.log(req.body);
 
-   adahar.findOne(req.body).then((todos)=>{
+   adahar.findOne(req.body[0]).then((todos)=>{
     if(!todos)
       res.status(404).send({validated :"fail"});
      else
